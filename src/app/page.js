@@ -1,5 +1,5 @@
 'use client';
-import React, { useState/* ,useRef,useEffect  */} from 'react';
+import React, { /*useState ,useRef,useEffect  */} from 'react';
 //import Image from "next/image";
 import ChatBot from "react-chatbotify";
 import { BotIcon, SendHorizontal } from "lucide-react";

@@ -1,6 +1,6 @@
 'use client';
-import React, { useState,useRef,useEffect } from 'react';
-import Image from "next/image";
+import React, { useState/* ,useRef,useEffect  */} from 'react';
+//import Image from "next/image";
 import ChatBot from "react-chatbotify";
 import { BotIcon, SendHorizontal } from "lucide-react";
 import styles from './style.json';
@@ -68,7 +68,7 @@ export default function Home() {
 	}
   const flow = {
     start: {
-        message: "Hello! Welcome to myty, Start by registering with myty. To start with May I know your name?",
+        message: "Hello! Welcome to DOIONS,  To start with May I know your name?",
         path: "show_name",
     },
     show_name : {

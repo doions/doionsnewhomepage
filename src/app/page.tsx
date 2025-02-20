@@ -1,101 +1,212 @@
+'use client';
+import React, { useState,useRef,useEffect } from 'react';
 import Image from "next/image";
+import ChatBot from "react-chatbotify";
+import { BotIcon, SendHorizontal } from "lucide-react";
+import styles from './style.json';
+import { Button } from "./Button";
+import botAvatar from "../../public/chat_icon.svg";
+
+
+
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [name, setName] = useState("")
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+
+  const settings = {
+		general: {
+			embedded: false,
+            primaryColor: "#070707",
+		secondaryColor: "#070707",
+        showFooter:false
+		},
+		chatHistory: {
+			storageKey: "example_single_theme"
+		},
+        chatButton: {
+            icon: ()=> {return <BotIcon size={50} color="#ffffff" strokeWidth={1.2}/>},
+        },
+        tooltip: {
+            mode: "CLOSE",
+            text: "hello there! I am myty. Talk to me! 😊",
+        },
+        header: {
+            title: (
+                <div style={{cursor: "pointer", margin: 0, fontSize: 20, fontWeight: "bold"}} onClick={
+                    () => window.open("https://myty.in")
+                }>
+                    myty
+                </div>
+            ),
+            showAvatar: true,
+		    avatar: botAvatar,
+            buttons: [Button.CLOSE_CHAT_BUTTON],
+        },
+        chatInput: {
+            disabled: false,
+            allowNewline: false,
+            enabledPlaceholderText: "Type your message...",
+            disabledPlaceholderText: "",
+            showCharacterCount: false,
+            characterLimit: -1,
+            botDelay: 1000,
+            sendButtonIcon: ()=> {return <SendHorizontal size={25} color="#ffffff" strokeWidth={2}/>},
+            blockSpam: false,
+            sendOptionOutput: true,
+            sendCheckboxOutput: true,
+            buttons: [Button.VOICE_MESSAGE_BUTTON, Button.SEND_MESSAGE_BUTTON]
+        },
+        
+        
+        notification: {
+            disabled: true,
+            
+       }
+
+       
+	}
+  const flow = {
+    start: {
+        message: "Hello! Welcome to myty, Start by registering with myty. To start with May I know your name?",
+        path: "show_name",
+    },
+    show_name : {
+        message: (params) => `Hey ${params.userInput}! Nice to meet you.`,
+        function: (params) => setName(params.userInput),
+        transition: {duration: 1000},
+        path: "ask_token",
+    },
+    ask_token: {
+        message: () => "Before we proceed, we need to verify your profile id, "
+        + "Enter your 6 digit profile id",
+        isSensitive: true,
+        path: (params) => {
+            if (params.userInput.length !== 6) {
+                return "incorrect_answer"
+            } else {
+                return "ask_age_group";
+            }
+        },
+    },
+    ask_age_group: {
+        message: () => `Hey ${name}!, Your account got verified, May i know your age group?`,
+        options: ["child", "teen", "adult"],
+        chatDisabled: true,
+        path: () => "ask_math_question",
+    },
+    ask_math_question: {
+        message: (params) => {
+            if (params.prevPath == "incorrect_answer") {
+                return;
+            }
+            return `I see you're a ${params.userInput}. Let's do a quick test! What is 1 + 1?`
+        },
+        path: (params) => {
+            if (params.userInput != "2") {
+                return "incorrect_answer"
+            } else {
+                return "ask_favourite_color";
+            }
+        },
+    },
+    ask_favourite_color: {
+        message: "Great Job! What is your favourite color?",
+        path: "ask_favourite_pet"
+    },
+    ask_favourite_pet: {
+        message: "Interesting! Pick any 2 pets below.",
+        checkboxes: {items: ["Dog", "Cat", "Rabbit", "Hamster"], min:2, max: 2},
+        function: (params) => alert(`You picked: ${JSON.stringify(params.userInput)}!`),
+        chatDisabled: true,
+        path: "ask_height",
+    },
+    ask_height: {
+        message: "What is your height (cm)?",
+        path: async (params) => {
+            if (isNaN(Number(params.userInput))) {
+                await params.injectMessage("Height needs to be a number!");
+                return;
+            }
+            return "ask_weather";
+        }
+    },
+    ask_weather: {
+        message: (params) => {
+            if (params.prevPath == "incorrect_answer") {
+                return;
+            }
+            return "What's my favourite color? Click the button below to find out my answer!"
+        },
+        component: (
+            <div style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: 10
+            }}>
+                <button 
+                    className="secret-fav-color"
+                    onClick={() => alert("black")}>
+                    Click me!
+                </button>
+            </div>
+        ),
+        path: async (params) => {
+            if (params.userInput.toLowerCase() != "black") {
+                return "incorrect_answer"
+            } else {
+                await params.openChat(false);
+                return "close_chat";
+            }
+        },
+    },
+    close_chat: {
+        message: "I went into hiding but you found me! Ok tell me, "+
+            "what's your favourite food?",
+        path: "ask_image"
+    },
+    ask_image: {
+        message: (params) =>
+            `${params.userInput}? Interesting. Could you share an image of that?`,
+        file: (params) => console.log(params.files),
+        function: (params) =>
+            params.showToast("Image is uploaded successfully!"),
+        path: "end",
+    },
+    end: {
+        message: "Thank you for sharing! See you again!",
+        path: "loop"
+    },
+    loop: {
+        message: (params) => {
+            // sends the message half a second later to facilitate testing of new message prompt
+            setTimeout(async () => {
+                await params.injectMessage("You have reached the end of the conversation!");
+            }, 500)
+        },
+        path: "loop"
+    },
+    incorrect_answer: {
+        message: "Your answer is incorrect, try again!",
+        transition: {duration: 0},
+        path: (params) => params.prevPath
+    },
+}
+  return (
+    <><div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+      
+
+        
+         DOIONS
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+       Contact Now.
       </footer>
     </div>
+    <ChatBot /* themes={themes} */  settings={settings} styles={styles} flow={flow}/>
+</>
   );
 }

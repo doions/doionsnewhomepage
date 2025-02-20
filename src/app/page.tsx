@@ -72,11 +72,13 @@ export default function Home() {
         path: "show_name",
     },
     show_name : {
-        message: (params) => `Hey ${params.userInput}! Nice to meet you.`,
+        message: "Hello! Welcome to DOIONS,  To start with May I know your name?",
+        path: "start",
+        /* message: (params: string) => `Hey ${params.userInput}! Nice to meet you.`,
         function: (params) => setName(params.userInput),
         transition: {duration: 1000},
-        path: "ask_token",
-    },
+        path: "ask_token", */
+    }/* ,
     ask_token: {
         message: () => "Before we proceed, we need to verify your profile id, "
         + "Enter your 6 digit profile id",
@@ -192,7 +194,7 @@ export default function Home() {
         message: "Your answer is incorrect, try again!",
         transition: {duration: 0},
         path: (params) => params.prevPath
-    },
+    }, */
 }
   return (
     <><div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">

@@ -11,7 +11,7 @@ import botAvatar from "../../public/chat_icon.svg";
 
 
 export default function Home() {
-  const [name, setName] = useState("")
+ //const [name, setName] = useState("")
 
 
   const settings = {

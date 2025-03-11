@@ -202,7 +202,7 @@ export default function Home() {
       
 
         
-         DOIONS
+         DOIONS - the website is undergoing some server migration. you have caught us in the midst of a server transition.....
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
        Contact Now.
